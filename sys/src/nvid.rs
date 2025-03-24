@@ -536,6 +536,7 @@ NvAPI_GetGPUIDFromPhysicalGPU = 0x6533ea3e,
 
 NvAPI_GetInfoFrameStatePvt = 0x7fc17574,
 NvAPI_GPU_GetMemoryInfo = 0x07f9b368,
+NvAPI_GPU_GetMemoryInfoEx = 0xc0599498,
 
 NvAPI_LoadMicrocode = 0x3119f36e,
 NvAPI_GetLoadedMicrocodePrograms = 0x919b3136,

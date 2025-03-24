@@ -208,6 +208,14 @@ impl PhysicalGpu {
             .and_then(|_| data.convert_raw().map_err(Into::into))
     }
 
+    pub fn memory_info_ex(&self) -> sys::Result<MemoryInfoEx> {
+        trace!("gpu.memory_info_ex()");
+        let mut data = driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1::zeroed();
+
+        sys::status_result(unsafe { driverapi::NvAPI_GPU_GetMemoryInfoEx(self.0, &mut data) })
+            .and_then(|_| data.convert_raw().map_err(Into::into))
+    }
+
     pub fn clock_frequencies(&self, clock_type: ClockFrequencyType) -> sys::Result<ClockFrequencies> {
         trace!("gpu.clock_frequencies({:?})", clock_type);
         let mut clocks = clock::NV_GPU_CLOCK_FREQUENCIES::zeroed();
@@ -738,6 +746,31 @@ impl RawConversion for driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO {
             dedicated_available_current: Kibibytes(self.curAvailableDedicatedVideoMemory),
             dedicated_evictions_size: Kibibytes(self.dedicatedVideoMemoryEvictionsSize),
             dedicated_evictions: self.dedicatedVideoMemoryEvictionCount,
+        })
+    }
+}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Hash)]
+pub struct MemoryInfoEx  {
+    pub dedicated_video_memory_used: Kibibytes,
+    pub available_dedicated_video_memory: Kibibytes,
+    pub dedicated_video_memory: Kibibytes,
+    pub shared_system_memory_used: Kibibytes,
+    pub shared_system_memory: Kibibytes,
+}
+
+impl RawConversion for driverapi::NV_GPU_MEMORY_INFO_EX_V1 {
+    type Target = MemoryInfoEx;
+    type Error = Infallible;
+
+    fn convert_raw(&self) -> Result<Self::Target, Self::Error> {
+        Ok(MemoryInfoEx {
+            dedicated_video_memory_used: Kibibytes(self.dedicatedVideoMemory),
+            available_dedicated_video_memory: Kibibytes(self.availableDedicatedVideoMemory),
+            dedicated_video_memory: Kibibytes(self.dedicatedVideoMemory),
+            shared_system_memory_used: Kibibytes(self.sharedSystemMemory),
+            shared_system_memory: Kibibytes(self.sharedSystemMemory),
         })
     }
 }

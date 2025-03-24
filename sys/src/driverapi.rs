@@ -72,3 +72,41 @@ pub mod private {
         pub unsafe fn NvAPI_GetDisplayDriverMemoryInfo(hPhysicalGpu: handles::NvPhysicalGpuHandle, pMemoryInfo: *mut super::NV_DISPLAY_DRIVER_MEMORY_INFO) -> NvAPI_Status;
     }
 }
+
+nvstruct! {
+    /// Structure used in NvAPI_GPU_GetMemoryInfoEx.
+    ///
+    /// Detailed memory footprint for the GPU including usage and eviction info.
+    pub struct NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1 {
+        /// Version field must be set before calling the API.
+        pub version: u32,
+
+        /// Amount of dedicated video memory available for allocations (in KiB).
+        pub availableDedicatedVideoMemory: u32,
+
+        /// Total dedicated video memory (in KiB).
+        pub dedicatedVideoMemory: u32,
+
+        /// Amount of system video memory used (in KiB).
+        pub systemVideoMemory: u32,
+
+        /// Total shared system memory (in KiB).
+        pub sharedSystemMemory: u32,
+
+        /// Amount of dedicated video memory currently in use (in KiB).
+        pub dedicatedVideoMemoryUsed: u32,
+
+        /// Amount of shared system memory currently in use (in KiB).
+        pub sharedSystemMemoryUsed: u32,
+    }
+}
+
+pub type NV_GPU_MEMORY_INFO_EX_V1 = NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1;
+
+nvapi! {
+    pub type GPU_GetMemoryInfoExFn = extern "C" fn(hPhysicalGpu: handles::NvPhysicalGpuHandle, pMemoryInfo: *mut NV_GPU_MEMORY_INFO_EX_V1) -> NvAPI_Status;
+
+    /// This function retrieves the available driver memory footprint for the specified GPU.
+    /// If the GPU is in TCC Mode, only dedicatedVideoMemory will be returned in pMemoryInfo (NV_DISPLAY_DRIVER_MEMORY_INFO).
+    pub unsafe fn NvAPI_GPU_GetMemoryInfoEx;
+}

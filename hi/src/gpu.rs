@@ -2,10 +2,7 @@ use std::collections::BTreeMap;
 use serde::{Serialize, Deserialize};
 use crate::{allowable_result, allowable_result_fallback};
 
-use nvapi::{self,
-    ClockTable, VfpCurve, VfpEntry, Sensor, Cooler, ThermalInfo, PowerInfoEntry,
-    ClockFrequencyType, ClockEntry,
-    BaseVoltage, PStates, ClockRange, ThermalLimit,
+use nvapi::{self, BaseVoltage, ClockEntry, ClockFrequencyType, ClockRange, ClockTable, Cooler, MemoryInfoEx, PStates, PowerInfoEntry, Sensor, ThermalInfo, ThermalLimit, VfpCurve, VfpEntry
 };
 pub use nvapi::{
     PhysicalGpu,
@@ -36,6 +33,7 @@ pub struct GpuInfo {
     pub vendor: Vendor,
     pub pci: PciIdentifiers,
     pub memory: MemoryInfo,
+    pub memory_ex: MemoryInfoEx,
     pub system_type: SystemType,
     pub ram_type: RamType,
     pub ram_maker: RamMaker,
@@ -144,6 +142,7 @@ impl Gpu {
             vendor: allowable_result_fallback(pci.vendor().map_err(From::from), Vendor::Unknown)?,
             pci: pci,
             memory: self.gpu.memory_info()?,
+            memory_ex: self.gpu.memory_info_ex()?,
             system_type: allowable_result_fallback(self.gpu.system_type(), SystemType::Unknown)?,
             ram_type: allowable_result_fallback(self.gpu.ram_type(), RamType::Unknown)?,
             ram_maker: allowable_result_fallback(self.gpu.ram_maker(), RamMaker::Unknown)?,
