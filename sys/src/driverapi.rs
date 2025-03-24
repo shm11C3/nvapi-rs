@@ -81,23 +81,29 @@ nvstruct! {
         /// Version field must be set before calling the API.
         pub version: u32,
 
-        /// Amount of dedicated video memory available for allocations (in KiB).
-        pub availableDedicatedVideoMemory: u32,
-
-        /// Total dedicated video memory (in KiB).
+        /// Size(in bytes) of the physical framebuffer. Refers to the dedicated video memory on discrete GPUs. It is more performant for GPU operations than the reserved systemVideoMemory.
         pub dedicatedVideoMemory: u32,
 
-        /// Amount of system video memory used (in KiB).
+        /// Size(in bytes) of the current available physical framebuffer for allocating video memory surfaces.
+        pub availableDedicatedVideoMemory: u32,
+
+        /// Size(in bytes) of system memory the driver allocates at load time. It is a substitute for dedicated video memory. Typically used with integrated GPUs that do not have dedicated video memory.
         pub systemVideoMemory: u32,
 
-        /// Total shared system memory (in KiB).
-        pub sharedSystemMemory: u32,
+        /// Size(in bytes) of the current available physical framebuffer for allocating video memory surfaces.
+        pub curAvailableDedicatedVideoMemory: u32,
 
-        /// Amount of dedicated video memory currently in use (in KiB).
-        pub dedicatedVideoMemoryUsed: u32,
+        /// Size(in bytes) of the total size of memory released as a result of the evictions.
+        pub dedicatedVideoMemoryEvictionsSize: u32,
 
-        /// Amount of shared system memory currently in use (in KiB).
-        pub sharedSystemMemoryUsed: u32,
+        /// Indicates the number of eviction events that caused an allocation to be removed from dedicated video memory to free GPU video memory to make room for other allocations.
+        pub dedicatedVideoMemoryEvictionCount: u32,
+
+        /// Size(in bytes) of the total size of memory allocated as a result of the promotions.
+        pub dedicatedVideoMemoryPromotionsSize: u32,
+
+        /// Indicates the number of promotion events that caused an allocation to be promoted to dedicated video memory.
+        pub dedicatedVideoMemoryPromotionCount: u32,
     }
 }
 

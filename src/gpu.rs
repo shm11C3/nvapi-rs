@@ -752,12 +752,15 @@ impl RawConversion for driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO {
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Hash)]
-pub struct MemoryInfoEx  {
-    pub dedicated_video_memory_used: Kibibytes,
-    pub available_dedicated_video_memory: Kibibytes,
-    pub dedicated_video_memory: Kibibytes,
-    pub shared_system_memory_used: Kibibytes,
-    pub shared_system_memory: Kibibytes,
+pub struct MemoryInfoEx {
+    pub dedicated: Kibibytes,
+    pub dedicated_available: Kibibytes,
+    pub system: Kibibytes,
+    pub dedicated_available_current: Kibibytes,
+    pub dedicated_evictions_size: Kibibytes,
+    pub dedicated_evictions: u32,
+    pub dedicated_promotions_size: Kibibytes,
+    pub dedicated_promotions: u32,
 }
 
 impl RawConversion for driverapi::NV_GPU_MEMORY_INFO_EX_V1 {
@@ -766,11 +769,14 @@ impl RawConversion for driverapi::NV_GPU_MEMORY_INFO_EX_V1 {
 
     fn convert_raw(&self) -> Result<Self::Target, Self::Error> {
         Ok(MemoryInfoEx {
-            dedicated_video_memory_used: Kibibytes(self.dedicatedVideoMemory),
-            available_dedicated_video_memory: Kibibytes(self.availableDedicatedVideoMemory),
-            dedicated_video_memory: Kibibytes(self.dedicatedVideoMemory),
-            shared_system_memory_used: Kibibytes(self.sharedSystemMemory),
-            shared_system_memory: Kibibytes(self.sharedSystemMemory),
+            dedicated: Kibibytes(self.dedicatedVideoMemory / 1024),
+            dedicated_available: Kibibytes(self.availableDedicatedVideoMemory / 1024),
+            system: Kibibytes(self.systemVideoMemory / 1024),
+            dedicated_available_current: Kibibytes(self.curAvailableDedicatedVideoMemory / 1024),
+            dedicated_evictions_size: Kibibytes(self.dedicatedVideoMemoryEvictionsSize / 1024),
+            dedicated_evictions: self.dedicatedVideoMemoryEvictionCount,
+            dedicated_promotions_size: Kibibytes(self.dedicatedVideoMemoryPromotionsSize / 1024),
+            dedicated_promotions: self.dedicatedVideoMemoryPromotionCount,
         })
     }
 }
