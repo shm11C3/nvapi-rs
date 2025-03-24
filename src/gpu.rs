@@ -211,6 +211,7 @@ impl PhysicalGpu {
     pub fn memory_info_ex(&self) -> sys::Result<MemoryInfoEx> {
         trace!("gpu.memory_info_ex()");
         let mut data = driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1::zeroed();
+        data.version = driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_VER;
 
         sys::status_result(unsafe { driverapi::NvAPI_GPU_GetMemoryInfoEx(self.0, &mut data) })
             .and_then(|_| data.convert_raw().map_err(Into::into))

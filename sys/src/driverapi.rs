@@ -109,6 +109,9 @@ nvstruct! {
 
 pub type NV_GPU_MEMORY_INFO_EX_V1 = NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1;
 
+nvversion! { NV_DISPLAY_DRIVER_MEMORY_INFO_EX_VER_1(NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1 = 4 * 8, 1) }
+nvversion! { NV_DISPLAY_DRIVER_MEMORY_INFO_EX_VER = NV_DISPLAY_DRIVER_MEMORY_INFO_EX_VER_1 }
+
 nvapi! {
     pub type GPU_GetMemoryInfoExFn = extern "C" fn(hPhysicalGpu: handles::NvPhysicalGpuHandle, pMemoryInfo: *mut NV_GPU_MEMORY_INFO_EX_V1) -> NvAPI_Status;
 
