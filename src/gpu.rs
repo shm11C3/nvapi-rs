@@ -213,6 +213,9 @@ impl PhysicalGpu {
         let mut data = driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1::zeroed();
         data.version = driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_VER;
 
+        println!("NV_DISPLAY_DRIVER_MEMORY_INFO_EX_VER = 0x{:08X}", driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_VER);
+        println!("sizeof = {}", std::mem::size_of::<driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1>());
+
         sys::status_result(unsafe { driverapi::NvAPI_GPU_GetMemoryInfoEx(self.0, &mut data) })
             .and_then(|_| data.convert_raw().map_err(Into::into))
     }
