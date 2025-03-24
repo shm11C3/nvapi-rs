@@ -1,6 +1,7 @@
 use std::{ptr, fmt};
 use std::convert::Infallible;
 use log::trace;
+use nvapi_sys::nvapi;
 use serde::{Serialize, Deserialize};
 use crate::sys::gpu::{self, pstate, clock, power, cooler, thermal, display};
 use crate::sys::{self, driverapi, i2c};
@@ -8,6 +9,7 @@ use crate::types::{Kibibytes, KilohertzDelta, Kilohertz2Delta, Microvolts, Perce
 use crate::thermal::CoolerLevel;
 use crate::clock::{ClockDomain, VfpMask};
 use crate::pstate::PState;
+pub use nvapi::{nvapi_QueryInterface};
 
 #[derive(Debug)]
 pub struct PhysicalGpu(sys::handles::NvPhysicalGpuHandle);
@@ -212,6 +214,12 @@ impl PhysicalGpu {
         trace!("gpu.memory_info_ex()");
         let mut data = driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_V1::zeroed();
         data.version = driverapi::NV_DISPLAY_DRIVER_MEMORY_INFO_EX_VER;
+
+        let info_ex_ptr = unsafe { nvapi_QueryInterface(0x775EEAF5) };
+match info_ex_ptr {
+    Ok(_) => println!("NvAPI_GPU_GetMemoryInfoEx is available!"),
+    Err(_) => println!("NvAPI_GPU_GetMemoryInfoEx is NOT available in your driver."),
+}
 
         println!("Calling NvAPI_GPU_GetMemoryInfoEx...");
         println!("Struct version: 0x{:08X}", data.version);
